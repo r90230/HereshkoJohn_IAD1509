@@ -59,6 +59,7 @@
     SKAction *coinGet;
     SKLabelNode *score;
     SKAction *jumpAction;
+    NSString *alienPicked;
 }
 
 @property (nonatomic)int health;

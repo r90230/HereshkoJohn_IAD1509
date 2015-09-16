@@ -7,15 +7,18 @@
 //
 
 #import "MenuScene.h"
-#import "GameScene.h"
+#import "Level1.h"
 #import "LearningScene.h"
 #import "LevelSelect.h"
+#import "CharacterSelect.h"
+#import <GameKit/GameKit.h>
 
 @implementation MenuScene
 
 -(id) initWithSize:(CGSize)size
 {
     if (self = [super initWithSize:size]) {
+        [self authenticateLocalPlayer];
         int screenWidth = [UIScreen mainScreen].bounds.size.width;
         int screenHeight = [UIScreen mainScreen].bounds.size.height;
         
@@ -27,7 +30,7 @@
         [self addChild:background];
         //score label
         
-        SKLabelNode *titleLabel = [SKLabelNode labelNodeWithFontNamed:@"Chalkduster"];
+        titleLabel = [SKLabelNode labelNodeWithFontNamed:@"Chalkduster"];
         titleLabel.zPosition = 1;
         titleLabel.fontSize = 40;
         titleLabel.fontColor = [SKColor blackColor];
@@ -85,7 +88,7 @@
     //if Play Game is touched
     if ([playButton containsPoint:location]) {
         [musicPlayer pause];
-        SKScene *gameScene = [[GameScene alloc] initWithSize:[UIScreen mainScreen].bounds.size];
+        SKScene *gameScene = [[Level1 alloc] initWithSize:[UIScreen mainScreen].bounds.size];
         gameScene.scaleMode = SKSceneScaleModeAspectFill;
         SKTransition *reveal = [SKTransition fadeWithDuration:0.5];
         [self.view presentScene:gameScene transition:reveal];
@@ -102,7 +105,37 @@
         SKScene *gameScene = [[LearningScene alloc] initWithSize:[UIScreen mainScreen].bounds.size];
         SKTransition *reveal = [SKTransition fadeWithDuration:0.5];
         [self.view presentScene:gameScene transition:reveal];
+    } else if ([titleLabel containsPoint:location])
+    {
+        SKScene *gameScene = [[CharacterSelect alloc] initWithSize:[UIScreen mainScreen].bounds.size];
+        SKTransition *reveal = [SKTransition fadeWithDuration:0.5];
+        [self.view presentScene:gameScene transition:reveal];
     }
+}
+
+-(void)authenticateLocalPlayer{
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    
+    localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error){
+        if (viewController != nil) {
+            [self presentViewController:viewController];
+        }
+        else{
+            if ([GKLocalPlayer localPlayer].authenticated) {
+                isGameCenterEnabled = YES;
+
+            }
+            
+            else{
+                isGameCenterEnabled = NO;
+            }
+        }
+    };
+}
+
+-(void)presentViewController: (UIViewController*)viewController{
+    
+    [self.view.window.rootViewController presentViewController:viewController animated:YES completion:nil];
 }
 
 

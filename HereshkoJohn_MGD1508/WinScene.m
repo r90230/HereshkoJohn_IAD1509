@@ -7,7 +7,7 @@
 //
 
 #import "WinScene.h"
-#import "GameScene.h"
+#import "Level1.h"
 #import "Level2.h"
 #import "MenuScene.h"
 

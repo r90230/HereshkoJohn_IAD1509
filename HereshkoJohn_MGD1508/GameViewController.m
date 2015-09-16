@@ -7,7 +7,7 @@
 //
 
 #import "GameViewController.h"
-#import "GameScene.h"
+#import "Level1.h"
 #import "MenuScene.h"
 
 @implementation SKScene (Unarchive)

@@ -7,7 +7,7 @@
 //
 
 #import "LevelSelect.h"
-#import "GameScene.h"
+#import "Level1.h"
 #import "Level2.h"
 #import "MenuScene.h"
 
@@ -94,7 +94,7 @@
     //if Level 1 is touched
     if ([level1 containsPoint:location]) {
         [musicPlayer pause];
-        SKScene *gameScene = [[GameScene alloc] initWithSize:[UIScreen mainScreen].bounds.size];
+        SKScene *gameScene = [[Level1 alloc] initWithSize:[UIScreen mainScreen].bounds.size];
         gameScene.scaleMode = SKSceneScaleModeAspectFill;
         SKTransition *reveal = [SKTransition fadeWithDuration:0.5];
         [self.view presentScene:gameScene transition:reveal];
@@ -110,7 +110,7 @@
     {
         NSString *thisLevel = [[NSUserDefaults standardUserDefaults]valueForKey:@"level"];
         if ([thisLevel  isEqual: @"Level 1"]) {
-            SKScene *gameScene = [[GameScene alloc] initWithSize:self.size];
+            SKScene *gameScene = [[Level1 alloc] initWithSize:self.size];
             gameScene.scaleMode = SKSceneScaleModeAspectFill;
             SKTransition *reveal = [SKTransition pushWithDirection:SKTransitionDirectionLeft duration:0.5];
             [self.view presentScene:gameScene transition:reveal];

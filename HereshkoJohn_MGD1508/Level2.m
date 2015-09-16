@@ -257,9 +257,23 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
     
     //player work
     
-    player = [SKSpriteNode spriteNodeWithImageNamed:@"alienBlue_front"];
-    player.xScale = 0.5;
-    player.yScale = 0.5;
+    alienPicked = [[NSUserDefaults standardUserDefaults]valueForKey:@"alienPicked"];
+    
+    if ([alienPicked isEqual:@"alienK"]) {
+        player = [SKSpriteNode spriteNodeWithImageNamed:@"alienBlue_front"];
+        player.xScale = 0.5;
+        player.yScale = 0.5;
+    } else if ([alienPicked isEqual:@"alienSlime"]) {
+        player = [SKSpriteNode spriteNodeWithImageNamed:@"alien2_front"];
+        player.xScale = 0.55;
+        player.yScale = 0.55;
+    } else if (alienPicked == NULL)
+    {
+        player = [SKSpriteNode spriteNodeWithImageNamed:@"alienBlue_front"];
+        player.xScale = 0.5;
+        player.yScale = 0.5;
+    }
+
     player.position = CGPointMake([UIScreen mainScreen].bounds.size.width/2,[UIScreen mainScreen].bounds.size.height/1.25);
     player.name = @"player";
     player.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:player.size.width/2];
@@ -276,10 +290,24 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
     
     [worldNode addChild:player];
     
-    SKTextureAtlas *atlas = [SKTextureAtlas atlasNamed:@"walk"];
-    SKTexture *walk1 = [atlas textureNamed:@"alienBlue_walk1.png"];
-    SKTexture *walk2 = [atlas textureNamed:@"alienBlue_walk2.png"];
-    walkTextures = @[walk1, walk2];
+    if ([alienPicked isEqual:@"alienK"]) {
+        SKTextureAtlas *atlas = [SKTextureAtlas atlasNamed:@"walk"];
+        SKTexture *walk1 = [atlas textureNamed:@"alienBlue_walk1.png"];
+        SKTexture *walk2 = [atlas textureNamed:@"alienBlue_walk2.png"];
+        walkTextures = @[walk1, walk2];
+    } else if ([alienPicked isEqual:@"alienSlime"]) {
+        
+        SKTextureAtlas *atlas = [SKTextureAtlas atlasNamed:@"walk2"];
+        SKTexture *walk1 = [atlas textureNamed:@"alien2_Walk1.png"];
+        SKTexture *walk2 = [atlas textureNamed:@"alien2_walk2.png"];
+        walkTextures = @[walk1, walk2];
+    } else if (alienPicked == NULL)
+    {
+        SKTextureAtlas *atlas = [SKTextureAtlas atlasNamed:@"walk"];
+        SKTexture *walk1 = [atlas textureNamed:@"alienBlue_walk1.png"];
+        SKTexture *walk2 = [atlas textureNamed:@"alienBlue_walk2.png"];
+        walkTextures = @[walk1, walk2];
+    }
     
     hitAction = [SKAction playSoundFileNamed:@"creature3.mp3" waitForCompletion:YES];
     //enemy work
@@ -332,7 +360,7 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
         key.yScale = .75;
     }
     
-    keyDing = [SKAction playSoundFileNamed:@"bell.m4a" waitForCompletion:YES];
+    keyDing = [SKAction playSoundFileNamed:@"threeTone2.m4a" waitForCompletion:YES];
     
     keyNoti = [SKSpriteNode spriteNodeWithImageNamed:@"hudKey_blue_empty.png"];
     keyNoti.position = CGPointMake([UIScreen mainScreen].bounds.size.width/2+1085,[UIScreen mainScreen].bounds.size.height/4 + 200);
@@ -373,6 +401,7 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
     exitSignChallenge.yScale = .8;
     exitSignChallenge.physicsBody.categoryBitMask = CollisionCategorySign;
     exitSignChallenge.zPosition = 2;
+    exitSignChallenge.name = @"ChallengeSign";
     
     if (isIpad) {
         exitSign.position = CGPointMake([UIScreen mainScreen].bounds.size.width/2+1195,[UIScreen mainScreen].bounds.size.height/4 + 130);
@@ -558,21 +587,45 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
         CGPoint location = [touch locationInNode:self];
         SKSpriteNode *touchedSprite = (SKSpriteNode*)[self nodeAtPoint:location];
         
-        walkAnimationLoop = [SKAction repeatActionForever:[SKAction animateWithTextures:walkTextures timePerFrame:0.2 resize:true restore:false]];
+        if ([alienPicked isEqual:@"alienK"]) {
+            walkAnimationLoop = [SKAction repeatActionForever:[SKAction animateWithTextures:walkTextures timePerFrame:0.2 resize:true restore:false]];
+        } else if ([alienPicked isEqual:@"alienSlime"]) {
+            walkAnimationLoop = [SKAction repeatActionForever:[SKAction animateWithTextures:walkTextures timePerFrame:0.2 resize:false restore:false]];
+        } else if (alienPicked == NULL)
+        {
+            walkAnimationLoop = [SKAction repeatActionForever:[SKAction animateWithTextures:walkTextures timePerFrame:0.2 resize:true restore:false]];
+        }
         flipPlayer = [SKAction scaleXBy:-1 y:0 duration:0.0];
         
         soundEffect = [SKAction playSoundFileNamed:@"jump1.mp3" waitForCompletion:YES];
         
         slimeAnimation = [SKAction animateWithTextures:enemyTextures timePerFrame:0.2];
-        squishEffect = [SKAction playSoundFileNamed:@"squish.m4a" waitForCompletion:YES];
-        jumpAction = [SKAction setTexture:[SKTexture textureWithImageNamed:@"alienBlue_jump.png"] resize:YES];
-        
-        
+        squishEffect = [SKAction playSoundFileNamed:@"phaseJump1.m4a" waitForCompletion:YES];
+        if ([alienPicked isEqual:@"alienK"]) {
+            jumpAction = [SKAction setTexture:[SKTexture textureWithImageNamed:@"alienBlue_jump.png"] resize:YES];
+            
+        } else if ([alienPicked isEqual:@"alienSlime"]) {
+            jumpAction = [SKAction setTexture:[SKTexture textureWithImageNamed:@"alien2_jump.png"] resize:YES];
+            
+        } else if (alienPicked == NULL)
+        {
+            jumpAction = [SKAction setTexture:[SKTexture textureWithImageNamed:@"alienBlue_jump.png"] resize:YES];
+            
+        }
         if (location.x > self.size.width/2) {
             isRunningRight = true;
             isRunningLeft = false;
             if (flipped) {
-                player.xScale = .5;
+                if ([alienPicked isEqual:@"alienK"]) {
+                    player.xScale = 0.5;
+                    
+                } else if ([alienPicked isEqual:@"alienSlime"]) {
+                    player.xScale = 0.55;
+                    
+                } else if (alienPicked == NULL)
+                {
+                    player.xScale = 0.5;
+                }
                 flipped = false;
             }
             [player runAction:walkAnimationLoop withKey:@"walkRightKey"];
@@ -580,7 +633,17 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
             isRunningLeft = true;
             isRunningRight = false;
             if (!flipped) {
-                player.xScale = -0.5;
+                if ([alienPicked isEqual:@"alienK"]) {
+                    player.xScale = -0.5;
+                    
+                } else if ([alienPicked isEqual:@"alienSlime"]) {
+                    player.xScale = -0.55;
+                    
+                } else if (alienPicked == NULL)
+                {
+                    player.xScale = -0.5;
+                }
+                
                 flipped = true;
             }
             [player runAction:walkAnimationLoop withKey:@"walkRightKey"];
@@ -688,10 +751,16 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
             [self runAction:squishEffect];
             [enemy runAction:slimeAnimation];
             [enemy runAction:[SKAction waitForDuration:5]];
-            self.scoreNumber = self.scoreNumber + 150;
+            if ([alienPicked isEqual:@"alienSlime"])
+            {
+                self.scoreNumber = self.scoreNumber - 200;
+            } else {
+                self.scoreNumber = self.scoreNumber + 150;
+            }
             [enemy removeFromParent];
         } else
         {
+            if ([alienPicked isEqual:@"alienSlime"]) return;
             self.health--;
             [player runAction:hitAction];
             [enemy removeActionForKey:@"movement"];
@@ -715,6 +784,16 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
             self.didWin = YES;
             endScene.playerWon = YES;
         };
+        if ((contact.bodyB.node.name = @"ChallengeSign"))
+        {
+            if ([[[NSUserDefaults standardUserDefaults]valueForKey:@"challenge"] isEqual:@"Complete2"]) return;
+                
+            NSString *challengeComplete2 = @"Complete2";
+            [[NSUserDefaults standardUserDefaults] setObject:challengeComplete2 forKey:@"challenge"];
+            [self runAction:keyDing];
+            
+        }
+    
     }
     
     if ((contact.bodyB.categoryBitMask == CollisionCategoryCoin))

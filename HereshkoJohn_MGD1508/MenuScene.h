@@ -8,13 +8,17 @@
 
 #import <SpriteKit/SpriteKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <GameKit/GameKit.h>
 
 @interface MenuScene : SKScene
 {
     SKLabelNode *playButton;
     SKLabelNode *learningButton;
     SKLabelNode *selectButton;
+    SKLabelNode *titleLabel;
     AVAudioPlayer *musicPlayer;
+    BOOL isGameCenterEnabled;
 }
+
 
 @end
