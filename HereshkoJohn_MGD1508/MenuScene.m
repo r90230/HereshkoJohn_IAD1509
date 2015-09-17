@@ -54,7 +54,7 @@
         learningButton.zPosition = 1;
         learningButton.fontSize = 25;
         learningButton.fontColor = [SKColor blackColor];
-        learningButton.position = CGPointMake(screenWidth/2, screenHeight/2-75);
+        learningButton.position = CGPointMake(screenWidth/2, screenHeight/2-50);
         learningButton.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
         [learningButton setText:@"Learn to Play"];
         [self addChild:learningButton];
@@ -63,11 +63,23 @@
         selectButton.zPosition = 1;
         selectButton.fontSize = 25;
         selectButton.fontColor = [SKColor blackColor];
-        selectButton.position = CGPointMake(screenWidth/2, screenHeight/2-200);
+        selectButton.position = CGPointMake(screenWidth/2, screenHeight/2-150);
         selectButton.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
         [selectButton setText:@"Level Select"];
         [self addChild:selectButton];
+    
+        
+        leaderboard = [SKLabelNode labelNodeWithFontNamed:@"KenVector Bold"];
+        leaderboard.zPosition = 1;
+        leaderboard.fontSize = 23;
+        leaderboard.fontColor = [SKColor blackColor];
+        leaderboard.position = CGPointMake(screenWidth/2, screenHeight/2-250);
+        leaderboard.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+        [leaderboard setText:@"Leaderboards"];
+        [self addChild:leaderboard];
+        
     }
+    
     
     NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Retro_Mystic" ofType:@"m4a"]];
     musicPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:nil];
@@ -110,6 +122,9 @@
         SKScene *gameScene = [[CharacterSelect alloc] initWithSize:[UIScreen mainScreen].bounds.size];
         SKTransition *reveal = [SKTransition fadeWithDuration:0.5];
         [self.view presentScene:gameScene transition:reveal];
+    } else if ([leaderboard containsPoint:location])
+    {
+        [self presentLeaderboard];
     }
 }
 
@@ -137,6 +152,21 @@
     
     [self.view.window.rootViewController presentViewController:viewController animated:YES completion:nil];
 }
+
+-(void)presentLeaderboard
+{
+    GKGameCenterViewController *leaderboardController = [[GKGameCenterViewController alloc]init];
+    leaderboardController.gameCenterDelegate = self;
+    if (leaderboardController != nil) {
+        [self presentViewController:leaderboardController];
+    }
+}
+
+- (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController *)gameCenterViewController
+{
+    [gameCenterViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 
 @end

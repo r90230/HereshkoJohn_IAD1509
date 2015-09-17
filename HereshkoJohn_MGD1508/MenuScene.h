@@ -10,12 +10,13 @@
 #import <AVFoundation/AVFoundation.h>
 #import <GameKit/GameKit.h>
 
-@interface MenuScene : SKScene
+@interface MenuScene : SKScene <GKGameCenterControllerDelegate>
 {
     SKLabelNode *playButton;
     SKLabelNode *learningButton;
     SKLabelNode *selectButton;
     SKLabelNode *titleLabel;
+    SKLabelNode *leaderboard;
     AVAudioPlayer *musicPlayer;
     BOOL isGameCenterEnabled;
 }

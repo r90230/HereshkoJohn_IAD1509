@@ -684,6 +684,27 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
 
 -(void)reportScore
 {
+
+    if ([GKLocalPlayer localPlayer].authenticated) {
+        isGameCenterEnabled = YES;
+        
+        // Get the default leaderboard identifier.
+        [[GKLocalPlayer localPlayer] loadDefaultLeaderboardIdentifierWithCompletionHandler:^(NSString *leaderboardIdentifier, NSError *error) {
+            if (error != nil) {
+                NSLog(@"%@", error);
+            }
+            else{
+                localLeaderboardIdentifier = leaderboardIdentifier;
+            }
+        }];
+    }
+    
+    else{
+        isGameCenterEnabled = NO;
+    }
+
+    
+    
     NSString *leaderboardID = localLeaderboardIdentifier;
     GKScore *leaderScore;
     if (leaderboardID != nil)
@@ -699,8 +720,10 @@ typedef NS_OPTIONS(uint32_t, CollisionCategory){
     }
     
     [GKScore reportScores:@[leaderScore] withCompletionHandler:^(NSError *error) {
-        NSLog(@"%@", [error localizedDescription]);
-        NSLog(@"Error");
+        if (error != nil) {
+            NSLog(@"%@", [error localizedDescription]);
+            NSLog(@"Error");
+        }
     }];
 }
 
